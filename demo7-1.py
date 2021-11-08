@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from sklearn import linear_model
 
+# y = coefficient*x + intercept
 regression1 = linear_model.LinearRegression()
 features = [[1], [2], [3]]
 values = [1, 5, 9]
