@@ -10,7 +10,7 @@ init_m = 10
 init_b = 10
 learning_rate = 0.1
 range1 = [-5, 5]
-plt.plot(range1, init_m * np.array(range1) + init_b)
+plt.plot(range1, init_m * np.array(range1) + init_b, 'g--')
 plt.show()
 
 
@@ -36,3 +36,19 @@ def update_weights(m, b, X, Y, learning_rate):
     m -= (m_deriv / float(N)) * learning_rate
     b -= (b_deriv / float(N)) * learning_rate
     return m, b
+
+
+current_m = init_m
+current_b = init_b
+for _ in range(30):
+    new_m, new_b = update_weights(current_m, current_b,
+                                  regressionData[0], regressionData[1], learning_rate)
+    print(new_m, new_b)
+    range1 = [-5, 5]
+    plt.plot(range1, new_m * range1 + new_b, 'g--')
+    plt.scatter(regressionData[0], regressionData[1], c='red', marker='^')
+    plt.show()
+    new_cost = cost(new_m, new_b, regressionData[0], regressionData[1])
+    print("cost=", new_cost)
+    current_m = new_m
+    current_b = new_b
