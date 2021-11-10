@@ -1,0 +1,438 @@
+第一天9:10分開課
+遠端同學要用中文名稱客服才能點名喔
+方:ucom12a.uuu.com.tw:7001
+王:ucom12a.uuu.com.tw:7002
+吳:ucom12a.uuu.com.tw:7003
+林:ucom12a.uuu.com.tw:7004
+郭:ucom12a.uuu.com.tw:7005
+劉:ucom12a.uuu.com.tw:7006
+Admin
+Pa$$w0rd
+語言喜好設定
+新增語言
+英文美國
+語音, 手寫
+check installed visual c++ redistribute version ==> 14.29.30135.0
+gpedit.msc
+
+cmd
+where python
+where pip
+
+C:\Users\Admin>where python
+C:\Python\Python38\python.exe
+
+C:\Users\Admin>where pip
+C:\Python\Python38\Scripts\pip.exe
+
+python -m pip install --upgrade pip
+
+~~~~~~~~~~~~~~~~~~~~~~
+Requirement already satisfied: pip in c:\python\python38\lib\site-packages (21.1.1)
+Collecting pip
+  Downloading pip-21.3.1-py3-none-any.whl (1.7 MB)
+     |████████████████████████████████| 1.7 MB 1.6 MB/s
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 21.1.1
+    Uninstalling pip-21.1.1:
+      Successfully uninstalled pip-21.1.1
+Successfully installed pip-21.3.1
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+pip install --upgrade setuptools
+
+Requirement already satisfied: setuptools in c:\python\python38\lib\site-packages (56.0.0)
+Collecting setuptools
+  Downloading setuptools-58.5.3-py3-none-any.whl (946 kB)
+     |████████████████████████████████| 946 kB 1.7 MB/s
+Installing collected packages: setuptools
+  Attempting uninstall: setuptools
+    Found existing installation: setuptools 56.0.0
+    Uninstalling setuptools-56.0.0:
+      Successfully uninstalled setuptools-56.0.0
+Successfully installed setuptools-58.5.3
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pip list
+
+C:\Users\Admin>pip list
+Package    Version
+---------- -------
+pip        21.3.1
+setuptools 58.5.3
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pip install virtualenv virtualenvwrapper virtualenvwrapper-win
+
+mkvirtualenv pykt1108
+(pykt1108)pip list ==> only 3
+deactivate
+workon pykt1108
+pip install --upgrade tensorflow
+
+https://pypi.org/
+#pip install keras
+pip install numpy scipy sklearn matplotlib pandas ipython jupyter pillow 
+
+ipython
+import tensorflow
+tensorflow.__version__
+import keras
+keras.__version__
+(2.7.0)==>應該看到, 沒有其它錯誤
+
+https://www.jetbrains.com/pycharm/download/#section=windows
+
+-Xmx750m
+-Xms128m
+
+-Xmx2048m
+-Xms2048m
+
+C:\Users\Admin\AppData\Roaming\JetBrains\PyCharmCE2021.2
+
+https://git-scm.com/
+
+https://github.com/git-for-windows/git/releases/download/v2.33.1.windows.1/Git-2.33.1-64-bit.exe
+
+git config --global user.name "Mark Ho"
+git config --global user.email "mark@uuu.com"
+c:\Users\Admin\.gitconfig
+
+C:\Users\Admin\Envs\pykt1108\Scripts\python.exe
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\Admin\Envs\pykt1108\Scripts\python.exe C:/Users/Admin/PycharmProjects/PYKT1108/main.py
+Hi, PyCharm
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import tensorflow
+import keras
+import numpy
+import sklearn
+import pandas
+
+
+def print_hi(name):
+    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+
+
+if __name__ == '__main__':
+    print_hi('PyCharm')
+    print(f"tensorflow version={tensorflow.__version__}")
+    print(f"keras version={keras.__version__}")
+    print(f"numpy version={numpy.__version__}")
+    print(f"pandas version={pandas.__version__}")
+    print(f"sklearn version={sklearn.__version__}")
+
+File/Settings
+https://github.com/
+
+env check and setup everything (ML+DL)
+
+README.md
+
+# PYKT lab code
+
+## last modified: 08-Nov-2021
+
+demo1.py
+import tensorflow as tf
+
+t1 = tf.constant([1, 2, 3])
+print(t1 + t1)
+
+https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
+https://developer.nvidia.com/cudnn
+~~~~~~~~~~~~~~~~~~~~~~~~
+demo2
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+b = 5
+a = 3
+x = np.arange(-10, 10, 0.1)
+y = a * x + b
+plt.plot(x, y, label=f"y={a}x+b")
+plt.legend(loc=2)
+plt.axhline(0, color='black')
+plt.axvline(0, color='black')
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo3
+
+from matplotlib import pyplot as plt
+import numpy as np
+
+b = np.linspace(5, -5, 11)
+a = 3
+
+x = np.arange(-5, 5, 0.1)
+for b1 in b:
+    y = a * x + b1
+    plt.plot(x, y, label=f"y={a}x+{b1:.1f}")
+plt.legend(loc=2)
+plt.axhline(0, color='black')
+plt.axvline(0, color='black')
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo4
+
+from matplotlib import pyplot as plt
+import numpy as np
+
+b = 5
+a = np.linspace(5, -5, 11)
+x = np.arange(-5, 5, 0.1)
+for a1 in a:
+    y = a1 * x + b
+    plt.plot(x, y, label=f"y={a1:.1f}x+{b}")
+plt.legend(loc=2)
+plt.axhline(0, color="black")
+plt.axvline(0, color='black')
+
+plt.show()
+~~~~~~~~~~~~~~~~
+1/(1+exp(-x))
+https://www.sympygamma.com
+
+pip list
+
+~~~~~~~~~~~~~~~~~~~~~~~
+demo5
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+range1 = [-1, 3]
+p = np.array([3])
+
+plt.plot(range1, p*range1+5, c='green')
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~
+demo6
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn import datasets
+
+regressionData = datasets.make_regression(100, 1, noise=5)
+plt.scatter(regressionData[0], regressionData[1], c='red', marker='^')
+init_m = 10
+init_b = 10
+learning_rate = 0.1
+range1 = [-5, 5]
+plt.plot(range1, init_m * np.array(range1) + init_b, 'g--')
+plt.show()
+
+
+def cost(m, b, X, Y):
+    N = len(X)
+    cost = 0
+    for i in range(N):
+        cost += (Y[i] - (m * X[i] + b)) ** 2
+    return cost / N
+
+
+init_cost = cost(init_m, init_b, regressionData[0], regressionData[1])
+print("init cost=%.2f" % init_cost[0])
+
+
+def update_weights(m, b, X, Y, learning_rate):
+    m_deriv = 0
+    b_deriv = 0
+    N = len(X)
+    for i in range(N):
+        m_deriv += -2 * X[i] * (Y[i] - (m * X[i] + b))
+        b_deriv += -2 * (Y[i] - (m * X[i] + b))
+    m -= (m_deriv / float(N)) * learning_rate
+    b -= (b_deriv / float(N)) * learning_rate
+    return m, b
+
+
+current_m = init_m
+current_b = init_b
+for _ in range(20):
+    new_m, new_b = update_weights(current_m, current_b,
+                                  regressionData[0], regressionData[1], learning_rate)
+    print(new_m, new_b)
+    range1 = [-5, 5]
+    plt.plot(range1, new_m * range1 + new_b, 'g--')
+    plt.scatter(regressionData[0], regressionData[1], c='red', marker='^')
+    plt.show()
+    new_cost = cost(new_m, new_b, regressionData[0], regressionData[1])
+    print("cost=", new_cost)
+    current_m = new_m
+    current_b = new_b
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo7
+
+import matplotlib.pyplot as plt
+from sklearn import linear_model
+
+regression1 = linear_model.LinearRegression()
+features = [[1], [2], [3]]
+values = [1, 4, 15]
+plt.scatter(features, values, c='green')
+plt.show()
+regression1.fit(features, values)
+print("coefficient=", regression1.coef_)
+print("intercept=", regression1.intercept_)
+range1 = [min(features), max(features)]
+print(regression1.coef_ * range1 + regression1.intercept_)
+print("score=", regression1.score(features, values))
+plt.plot(range1, regression1.coef_ * range1 + regression1.intercept_, c='gray')
+plt.scatter(features, values, c='green')
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo8
+
+from sklearn import linear_model
+
+features = [[0, 1], [1, 3], [2, 8]]
+values = [1, 4, 5.5]
+regression1 = linear_model.LinearRegression()
+regression1.fit(features, values)
+
+print("coef", regression1.coef_)
+print("intercept", regression1.intercept_)
+print("score", regression1.score(features, values))
+new_features = [[0, 0], [2, 2], [4, 4], [8, 8]]
+guess = regression1.predict(new_features)
+print("predict", guess)
+print("score2:", regression1.score(new_features, guess))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo9
+
+import matplotlib.pyplot as plt
+from sklearn import linear_model, datasets
+import numpy
+
+regressionData = datasets.make_regression(100, 1, noise=5)
+print(type(regressionData))
+print(regressionData[0].shape, regressionData[1].shape)
+print(type(regressionData[0]))
+plt.scatter(regressionData[0], regressionData[1], c='red', marker='^')
+plt.show()
+
+regression1 = linear_model.LinearRegression()
+regression1.fit(regressionData[0], regressionData[1])
+
+print(f"coef={regression1.coef_[0]}, intercept={regression1.intercept_}")
+print(f"score={regression1.score(regressionData[0], regressionData[1])}")
+print("coef={}, intercept={}".format(regression1.coef_[0], regression1.intercept_))
+print("score={}".format(regression1.score(regressionData[0], regressionData[1])))
+
+range1 = numpy.arange(regressionData[0].min() - 0.5, regressionData[0].max() + 0.5, 0.01)
+plt.plot(range1, regression1.coef_ * range1 + regression1.intercept_)
+plt.scatter(regressionData[0], regressionData[1], c='red', marker='^')
+plt.show()
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo10
+
+import matplotlib.pyplot as plt
+from sklearn import datasets
+
+regression1 = datasets.make_regression(10, 6, noise=5)
+
+for i in range(len(regression1[0])):
+    x1 = regression1[0][:, i]
+    y = regression1[1]
+    plt.scatter(x1, y)
+    plt.title("#{} V.S. Y variable".format(i))
+    plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo11
+from sklearn import datasets
+
+data1 = datasets.make_regression(10, 6, noise=5)
+regressionX = data1[0]
+print(regressionX)
+r1 = sorted(regressionX, key=lambda t: t[0])
+print(r1)
+r2 = sorted(regressionX, key=lambda t: t[1])
+print(r2)
+r3 = sorted(regressionX, key=lambda t: t[2])
+print(r3)
+r4 = sorted(regressionX, key=lambda t: t[3])
+print(r4)
+r5 = sorted(regressionX, key=lambda t: t[4])
+print(r5)
+r6 = sorted(regressionX, key=lambda t: t[5])
+print(r6)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo12
+
+import numpy as np
+
+a = np.zeros((10, 2))
+print(a)
+b = a.T
+c = b.view()
+print(a.shape, b.shape, c.shape)
+d = np.reshape(b, (5, 4))
+print(d)
+print(a.shape, b.shape, c.shape, d.shape)
+e = np.reshape(b, (20,))
+print(e.shape)
+f = np.reshape(b, (-1,))
+print(f.shape)
+g = np.reshape(b, (20, -1))
+print(g.shape)
+h = np.reshape(b, (-1, 20))
+print(h.shape)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo13
+
+import numpy as np
+
+a = np.array([[1, 2], [3, 4]])
+b = a.view()
+c = a
+print(a)
+print(b)
+print(c)
+print("_-------_")
+b.shape = (4, -1)
+print(a)
+print(b)
+print(c)
+print("_*******_")
+a[0][0] = 100
+print(a)
+print(b)
+print(c)
+
+~~~~~~~~~~~~~~~~~~~~~~~
+demo14
+
+import numpy as np
+
+a = np.array([[1, 2], [3, 4]])
+b = a
+c = a.view()
+d = a.copy()
+print(a, b, c, d, sep='\n')
+a[0][0] = 100
+print("after change a[0][0] to 100")
+print(a, b, c, d, sep='\n')
+a.shape = (4,)
+print("after change a shape = (4,)")
+print(a, b, c, d, sep='\n')
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo15
+
+import numpy as np
+from sklearn import linear_model, datasets
+
+diabetes = datasets.load_diabetes()
+print(type(diabetes), diabetes.data.shape, diabetes.target.shape)
+dataForTest = -60
+
+data_train = diabetes.data[:dataForTest]
+target_train = diabetes.target[:dataForTest]
+print("data trained:", data_train.shape)
+print("target trained:", target_train.shape)
+data_test = diabetes.data[dataForTest:]
+target_test = diabetes.target[dataForTest:]
+print("data test:", data_test.shape)
+print("target test:", target_test.shape)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

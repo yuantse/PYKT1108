@@ -1,0 +1,625 @@
+﻿https://github.com/
+
+https://github.com/<your_username>/<your_project>.git
+
+git status
+git diff
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo15
+
+import numpy as np
+from sklearn import linear_model, datasets
+
+diabetes = datasets.load_diabetes()
+print(type(diabetes), diabetes.data.shape, diabetes.target.shape)
+dataForTest = -60
+
+data_train = diabetes.data[:dataForTest]
+target_train = diabetes.target[:dataForTest]
+print("data trained:", data_train.shape)
+print("target trained:", target_train.shape)
+data_test = diabetes.data[dataForTest:]
+target_test = diabetes.target[dataForTest:]
+print("data test:", data_test.shape)
+print("target test:", target_test.shape)
+# start making regression
+regression1 = linear_model.LinearRegression()
+regression1.fit(data_train, target_train)
+print(regression1.coef_)
+print(regression1.intercept_)
+
+print("score=", regression1.score(data_test, target_test))
+
+for i in range(dataForTest, 0):
+    data1 = np.array(data_test[i]).reshape(1, -1)
+    print("predict={:.2f}, actual={:.2f}".format(regression1.predict(data1)[0], target_test[i]))
+
+mean_square_error = np.mean((regression1.predict(data_test) - target_test) ** 2)
+print(mean_square_error)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo16
+
+import numpy as np
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+# polynomial
+from sklearn.preprocessing import PolynomialFeatures
+
+x = np.array([5, 15, 25, 35, 45, 55]).reshape((-1, 1))
+y = np.array([15, 11, 2, 8, 25, 32])
+plt.plot(x, y)
+plt.scatter(x, y)
+plt.show()
+regression1 = LinearRegression()
+regression1.fit(x, y)
+
+x_sequence = np.array(np.arange(5, 55, 0.1)).reshape(-1, 1)
+plt.plot(x, y)
+plt.scatter(x, y)
+plt.plot(x, regression1.coef_ * x + regression1.intercept_)
+print("linear regression score=", regression1.score(x, y))
+plt.title("linear regression score=%.2f" % regression1.score(x, y))
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo16
+
+import numpy as np
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+# polynomial
+from sklearn.preprocessing import PolynomialFeatures
+
+x = np.array([5, 15, 25, 35, 45, 55]).reshape((-1, 1))
+y = np.array([15, 11, 2, 8, 25, 32])
+plt.plot(x, y)
+plt.scatter(x, y)
+plt.show()
+regression1 = LinearRegression()
+regression1.fit(x, y)
+
+x_sequence = np.array(np.arange(5, 55, 0.1)).reshape(-1, 1)
+plt.plot(x, y)
+plt.scatter(x, y)
+plt.plot(x, regression1.coef_ * x + regression1.intercept_)
+print("linear regression score=", regression1.score(x, y))
+plt.title("linear regression score=%.2f" % regression1.score(x, y))
+plt.show()
+
+# higher order
+# change this degree
+transformer = PolynomialFeatures(degree=6, include_bias=False)
+transformer.fit(x)
+x_ = transformer.transform(x)
+print("x shape={}, x_ shape={}".format(x.shape, x_.shape))
+print(x_)
+
+regression2 = LinearRegression().fit(x_, y)
+print("polynomial regression 2nd order, score=%.2f" % regression2.score(x_, y))
+print("regression2 coef=", regression2.coef_)
+print("intercept=", regression2.intercept_)
+x_sequence_ = transformer.transform(x_sequence)
+y_pred = regression2.predict(x_sequence_)
+plt.plot(x, y)
+plt.scatter(x, y)
+plt.plot(x_sequence, y_pred)
+plt.title("polynomial regression 2nd order, score=%.2f" % regression2.score(x_, y))
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import matplotlib.pyplot as plt
+from sklearn import datasets
+import numpy as np
+
+iris = datasets.load_iris()
+
+print(type(iris))
+print(dir(iris))
+print(iris.feature_names)
+X = iris.data
+species = iris.target
+print(X.shape)
+print(species, np.unique(species, return_counts=True))
+
+counter = 1
+for i in range(0, 4):
+    for j in range(i + 1, 4):
+        plt.figure(counter, figsize=(8, 6))
+        xData = X[:, i]
+        yData = X[:, j]
+        plt.scatter(xData, yData, c=species, cmap=plt.cm.Paired)
+        plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import matplotlib.pyplot as plt
+from sklearn import datasets
+import numpy as np
+
+iris = datasets.load_iris()
+
+print(type(iris))
+print(dir(iris))
+labels = iris.feature_names
+print(iris.feature_names)
+X = iris.data
+species = iris.target
+print(X.shape)
+print(species, np.unique(species, return_counts=True))
+
+counter = 1
+for i in range(0, 4):
+    for j in range(i + 1, 4):
+        plt.figure(counter, figsize=(8, 6))
+        xData = X[:, i]
+        yData = X[:, j]
+        plt.scatter(xData, yData, c=species, cmap=plt.cm.Paired)
+        plt.xlabel(labels[i])
+        plt.ylabel(labels[j])
+        plt.xlim(xData.min()-0.1, xData.max()+0.1)
+        plt.ylim(yData.min()-0.1, yData.max()+0.1)
+        plt.xticks(())
+        plt.yticks(())
+        plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+from matplotlib import pyplot as plt
+import numpy as np
+
+x = np.arange(-10, 10, 0.1)
+f = 1 / (1 + np.exp(-x))
+plt.axhline(0.5, color='black')
+plt.axhline(0, color='gray')
+plt.axhline(1, color='gray')
+plt.axvline(0, color='black')
+plt.plot(x, f)
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo19
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+ws = [0.25, 0.5, 1.0, 2.0, 4.0]
+message = 'w=%.2f'
+
+x = np.arange(-10, 10, 0.1)
+
+for w in ws:
+    m = message % w
+    f = 1 / (1 + np.exp(-w * x))
+    plt.plot(x, f, label=m)
+plt.legend(loc=2)
+plt.axhline(0.5, color='black')
+plt.axhline(0, color='gray')
+plt.axhline(1, color='gray')
+plt.axvline(0, color='black')
+
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<demo20>
+import matplotlib.pyplot as plt
+import numpy as np
+
+w1 = 2.0
+bs = [-8, -4, 0, 4, 8]
+message = "y=%.2f*x+%d"
+
+x = np.arange(-20, 20, 0.1)
+
+for b in bs:
+    f = 1 / (1 + np.exp(-(x * w1 + b)))
+    plt.plot(x, f, label=message % (w1, b))
+plt.legend(loc=2)
+plt.axhline(0.5, color='black')
+plt.axhline(0, color='gray')
+plt.axhline(1, color='gray')
+plt.axvline(0, color='black')
+
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo21
+
+from sklearn.linear_model import LogisticRegression
+from sklearn import datasets
+import numpy as np
+import matplotlib.pyplot as plt
+
+iris = datasets.load_iris()
+print(list(iris.keys()))
+print(iris.feature_names)
+print(iris.target_names)
+X = iris["data"][:, 3:]
+y = (iris["target"] == 2).astype(np.int)  # is virginica or not
+print(y)
+regression1 = LogisticRegression()
+regression1.fit(X, y)
+print(regression1.coef_)
+print(regression1.intercept_)
+x_sequence = np.linspace(0, 3, 1000).reshape(-1, 1)
+y_probability = regression1.predict_proba(x_sequence)
+y_calculate = 1 / (1 + np.exp(-(x_sequence * regression1.coef_ + regression1.intercept_)))
+plt.plot(X, y, "g.")
+plt.plot(x_sequence, y_probability[:, 1], 'g-', label="virginica", linewidth=5)
+plt.plot(x_sequence, y_probability[:, 0], 'r--', label="not virginica")
+plt.plot(x_sequence, y_calculate, 'b-', label='calculate')
+
+plt.legend()
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo22
+
+from sklearn import datasets
+from sklearn import model_selection
+from sklearn.linear_model import LogisticRegression
+from numpy import mean
+iris = datasets.load_iris()
+data = iris.data
+target = iris.target
+
+regression1 = LogisticRegression()
+
+classifiers = [regression1]
+for c in classifiers:
+    score = model_selection.cross_val_score(regression1, data, target, cv=3)
+    print(c, score, mean(score))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo23
+
+import numpy as np
+from sklearn.svm import SVC
+
+X = np.array([[-1, -1], [-2, -1], [-3, -3], [1, 1], [2, 1], [3, 3]])
+y = np.array([1, 1, 1, 2, 2, 2])
+classifier1 = SVC(kernel='linear')
+classifier1.fit(X, y)
+print(classifier1.coef_)
+print(classifier1.intercept_)
+print(classifier1.support_vectors_)
+
+newX = [[0, 1], [1, 0], [0, -1], [-1, 0]]
+print("predict using svc:", classifier1.predict(newX))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo24
+from sklearn.svm import SVC
+from sklearn import datasets
+import matplotlib.pyplot as plt
+import numpy as np
+
+iris = datasets.load_iris()
+X = iris["data"][:, (2, 3)]
+y = iris["target"]
+
+setosa_or_versicolor = (y == 0) | (y == 1)
+X = X[setosa_or_versicolor]
+y = y[setosa_or_versicolor]
+classifier1 = SVC(kernel='linear')
+classifier1.fit(X, y)
+print(classifier1.coef_)
+print(classifier1.intercept_)
+
+x0 = np.linspace(0, 5.5, 200)
+# random guess
+pred_1 = np.random.randint(1, 5) * x0 - np.random.randint(1, 5)
+pred_2 = x0 - np.random.randint(1, 5)
+pred_3 = np.random.randn(1) * x0 + np.random.randn(1)
+
+
+def plot_svc_decision_boundary(classifier, xmin, xmax):
+    w = classifier.coef_[0]
+    b = classifier.intercept_[0]
+    x = np.linspace(xmin, xmax, 200)
+    decision_boundary = -w[0] / w[1] * x0 - b / w[1]
+
+    svs = classifier.support_vectors_
+    plt.scatter(svs[:, 0], svs[:, 1], s=180, facecolors="#C0FFEE")
+    plt.plot(x, decision_boundary, "k-", linewidth=2)
+
+
+flg, axes = plt.subplots(ncols=2, figsize=(10, 7))
+# random
+plt.sca(axes[0])
+plt.plot(x0, pred_1, "g--", linewidth=1)
+plt.plot(x0, pred_2, "m--", linewidth=1)
+plt.plot(x0, pred_3, "r--", linewidth=1)
+plt.title("arbitrary")
+plt.plot(X[:, 0][y == 1], X[:, 1][y == 1], "bs", label="iris versicolor")
+plt.plot(X[:, 0][y == 0], X[:, 1][y == 0], "yo", label="iris versicolor")
+plt.legend()
+# use svc
+plt.sca(axes[1])
+plt.title("use svc")
+plot_svc_decision_boundary(classifier1, 0, 5.5)
+plt.plot(X[:, 0][y == 1], X[:, 1][y == 1], "bs", label="iris versicolor")
+plt.plot(X[:, 0][y == 0], X[:, 1][y == 0], "yo", label="iris versicolor")
+plt.legend()
+
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo24
+
+from sklearn.svm import SVC
+from sklearn import datasets
+import matplotlib.pyplot as plt
+import numpy as np
+
+iris = datasets.load_iris()
+X = iris["data"][:, (2, 3)]
+y = iris["target"]
+
+setosa_or_versicolor = (y == 0) | (y == 1)
+X = X[setosa_or_versicolor]
+y = y[setosa_or_versicolor]
+classifier1 = SVC(kernel='linear', C=1)
+classifier1.fit(X, y)
+print(classifier1.coef_)
+print(classifier1.intercept_)
+
+x0 = np.linspace(0, 5.5, 200)
+# random guess
+pred_1 = np.random.randint(1, 5) * x0 - np.random.randint(1, 5)
+pred_2 = x0 - np.random.randint(1, 5)
+pred_3 = np.random.randn(1) * x0 + np.random.randn(1)
+
+
+def plot_svc_decision_boundary(classifier, xmin, xmax):
+    w = classifier.coef_[0]
+    b = classifier.intercept_[0]
+    x = np.linspace(xmin, xmax, 200)
+    decision_boundary = -w[0] / w[1] * x0 - b / w[1]
+    margin = 1 / w[1]
+    upper_boundary = decision_boundary + margin
+    lower_boundary = decision_boundary - margin
+    svs = classifier.support_vectors_
+    plt.scatter(svs[:, 0], svs[:, 1], s=180, facecolors="#C0FFEE")
+    plt.plot(x, decision_boundary, "k-", linewidth=2)
+    plt.plot(x, upper_boundary, 'b--', linewidth=2)
+    plt.plot(x, lower_boundary, 'r--', linewidth=2)
+
+
+flg, axes = plt.subplots(ncols=2, figsize=(10, 7))
+# random
+plt.sca(axes[0])
+plt.plot(x0, pred_1, "g--", linewidth=1)
+plt.plot(x0, pred_2, "m--", linewidth=1)
+plt.plot(x0, pred_3, "r--", linewidth=1)
+plt.title("arbitrary")
+plt.plot(X[:, 0][y == 1], X[:, 1][y == 1], "bs", label="iris versicolor")
+plt.plot(X[:, 0][y == 0], X[:, 1][y == 0], "yo", label="iris versicolor")
+plt.legend()
+# use svc
+plt.sca(axes[1])
+plt.title("use svc")
+plot_svc_decision_boundary(classifier1, 0, 5.5)
+plt.plot(X[:, 0][y == 1], X[:, 1][y == 1], "bs", label="iris versicolor")
+plt.plot(X[:, 0][y == 0], X[:, 1][y == 0], "yo", label="iris versicolor")
+plt.legend()
+
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo25
+
+import numpy as np
+from matplotlib import pyplot as plt
+from sklearn import svm
+from sklearn.datasets import make_blobs
+
+x, y = make_blobs(n_samples=40, centers=2)
+plt.scatter(x[:, 0], x[:, 1], c=y, s=30, cmap=plt.cm.Paired)
+
+classifier = svm.SVC(kernel='linear')
+classifier.fit(x, y)
+
+ax = plt.gca()
+ax.scatter(classifier.support_vectors_[:, 0], classifier.support_vectors_[:, 1],
+           s=100, linewidth=1, facecolors='none', edgecolors='k')
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo25""
+import numpy as np
+from matplotlib import pyplot as plt
+from sklearn import svm
+from sklearn.datasets import make_blobs
+
+x, y = make_blobs(n_samples=40, centers=2)
+plt.scatter(x[:, 0], x[:, 1], c=y, s=30, cmap=plt.cm.Paired)
+# linear,poly, rbf
+# , sigmoid <-- not suitable in every situation
+classifier = svm.SVC(kernel='rbf')
+classifier.fit(x, y)
+
+ax = plt.gca()
+xlim = ax.get_xlim()
+ylim = ax.get_ylim()
+xx = np.linspace(xlim[0], xlim[1], 300)
+yy = np.linspace(ylim[0], ylim[1], 300)
+YY, XX = np.meshgrid(yy, xx)
+xy = np.vstack([XX.ravel(), YY.ravel()]).T
+Z = classifier.decision_function(xy).reshape(XX.shape)
+ax.contour(XX, YY, Z, colors='k', levels=[-1, 0, 1], alpha=0.5, linestyles=['--', '-', '--'])
+ax.scatter(classifier.support_vectors_[:, 0], classifier.support_vectors_[:, 1],
+           s=100, linewidth=1, facecolors='none', edgecolors='k')
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~
+demo26
+from matplotlib import pyplot as plt
+import numpy as np
+from sklearn import datasets
+from sklearn import svm
+from sklearn.decomposition import PCA
+
+iris = datasets.load_iris()
+pca = PCA(n_components=2)
+data = pca.fit_transform(iris.data)
+print(data.shape, iris.data.shape)
+
+datamax = data.max(axis=0) + 0.5
+datamin = data.min(axis=0) - 0.5
+print(datamax)
+print(datamin)
+
+n = 2000
+X, Y = np.meshgrid(np.linspace(datamin[0], datamax[0], n),
+                   np.linspace(datamin[1], datamax[1], n))
+# linear,poly, rbf, sigmoid
+# linear,default C, 0.96666
+# linear, C larger, 0.9733
+svc = svm.SVC(kernel='linear', C=2000)
+svc.fit(data, iris.target)
+
+vectors = svc.support_vectors_
+Z = svc.predict(np.c_[X.ravel(), Y.ravel()])
+plt.contour(X, Y, Z.reshape(X.shape), colors="k")
+
+for c, s in zip([0, 1, 2], ['.', '^', '*']):
+    d = data[iris.target == c]
+    plt.scatter(d[:, 0], d[:, 1], c='k', marker=s)
+plt.scatter(vectors[:, 0], vectors[:, 1], c='red', marker='*')
+plt.show()
+print(svc.score(data, iris.target))
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo27
+
+import time
+
+from sklearn import datasets
+from sklearn import model_selection
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from numpy import mean
+
+iris = datasets.load_iris()
+data = iris.data
+target = iris.target
+
+regression1 = LogisticRegression(max_iter=50000)
+svc1 = SVC(kernel='linear', C=100)
+svc2 = SVC(kernel='poly', C=100)
+svc3 = SVC(kernel='rbf', C=100)
+#svc4 = SVC(kernel='sigmoid', C=100)
+
+classifiers = [regression1, svc1, svc2, svc3]
+for c in classifiers:
+    score = model_selection.cross_val_score(c, data, target, cv=3)
+    print(c, score, mean(score))
+
+
+add ==> C:\Program Files (x86)\Graphviz2.38\bin to Path env variable
+
+close all cmd, pycharm
+re-open cmd
+gvgen -v~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo28
+
+from sklearn import tree
+from matplotlib import pyplot
+
+X = [[0, 0], [1, 1]]
+Y = [0, 1]
+classifier = tree.DecisionTreeClassifier()
+classifier.fit(X, Y)
+print(classifier.tree_)
+
+print(classifier.predict([[0,1],[1,0],[-1,-1],[0,-1]]))
+
+tree.plot_tree(classifier)
+pyplot.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo29
+
+from matplotlib import pyplot as plt
+from sklearn import tree
+from sklearn.tree import export_graphviz
+from subprocess import check_call
+
+# 手動建一個graph目錄
+FILE_NAME = 'graph/demo29.dot'
+OUTPUT_FILENAME = 'graph/demo29.png'
+X = [[0, 0], [1, 1], [0, 1], [1, 0]]
+Y = [0, 0, 1, 1]
+col = ['red', 'green']
+marker = ['o', 'd']
+
+index = 0
+while index < len(X):
+    type = Y[index]
+    plt.scatter(X[index][0], X[index][1], c=col[type], marker=marker[type])
+    index += 1
+
+plt.show()
+
+classifier = tree.DecisionTreeClassifier()
+classifier.fit(X, Y)
+export_graphviz(classifier, out_file=FILE_NAME, filled=True, rounded=True, special_characters=True)
+
+check_call(['dot', '-Tpng', FILE_NAME, '-o', OUTPUT_FILENAME])
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pip install pydotplus
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+jupyter-notebook
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import pandas as pd
+import pydotplus
+from sklearn import datasets
+from IPython.display import Image
+from six import StringIO
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
+iris = datasets.load_iris()
+df = pd.DataFrame(iris.data, columns = iris.feature_names)
+df.head(n=10)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+y = iris.target
+y
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tree1 = DecisionTreeClassifier()
+tree1.fit(df, y)
+tree1.tree_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+dot_data = StringIO()
+export_graphviz(tree1, out_file = dot_data, filled=True, rounded=True, special_characters=True)
+graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
+image1 = Image(graph.create_png())
+image1
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import time
+
+from sklearn import datasets
+from sklearn import model_selection
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from numpy import mean
+from sklearn.tree import DecisionTreeClassifier
+
+iris = datasets.load_iris()
+data = iris.data
+target = iris.target
+
+regression1 = LogisticRegression(max_iter=50000)
+svc1 = SVC(kernel='linear', C=100)
+svc2 = SVC(kernel='poly', C=100)
+svc3 = SVC(kernel='rbf', C=100)
+tree1 = DecisionTreeClassifier()
+
+classifiers = [regression1, svc1, svc2, svc3, tree1]
+for c in classifiers:
+    score = model_selection.cross_val_score(c, data, target, cv=3)
+    print(c, score, mean(score))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+from copy import deepcopy
+import matplotlib.pyplot as plt
+import numpy as np
+
+X = np.r_[np.random.randn(50, 2) + [2, 2],
+          np.random.randn(50, 2) + [0, -2],
+          np.random.randn(50, 2) + [-2, 2]]
+[plt.scatter(e[0], e[1], c='black', s=7) for e in X]
+k = 3
+
+C_x = np.random.uniform(np.min(X[:, 0]), np.max(X[:, 0]), size=k)
+C_y = np.random.uniform(np.min(X[:, 1]), np.max(X[:, 1]), size=k)
+C = np.array(list(zip(C_x, C_y)), dtype=np.float32)
+print(C)
+plt.scatter(C_x, C_y, marker='*', s=90, c='#0599FF')
+
+plt.show()
+
