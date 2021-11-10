@@ -1,0 +1,567 @@
+﻿demo32
+from copy import deepcopy
+import matplotlib.pyplot as plt
+import numpy as np
+
+X = np.r_[np.random.randn(50, 2) + [2, 2],
+          np.random.randn(50, 2) + [0, -2],
+          np.random.randn(50, 2) + [-2, 2]]
+[plt.scatter(e[0], e[1], c='black', s=7) for e in X]
+k = 3
+
+C_x = np.random.uniform(np.min(X[:, 0]), np.max(X[:, 0]), size=k)
+C_y = np.random.uniform(np.min(X[:, 1]), np.max(X[:, 1]), size=k)
+C = np.array(list(zip(C_x, C_y)), dtype=np.float32)
+print(C)
+plt.scatter(C_x, C_y, marker='*', s=90, c='#0599FF')
+
+plt.show()
+
+
+def dist(a, b, ax=1):
+    return np.linalg.norm(a - b, axis=ax)
+
+
+C_old = np.zeros(C.shape)
+clusters = np.zeros(len(X))
+delta = dist(C, C_old, None)
+print(f"delta={delta}")
+
+
+def plot_kmean(current_cluster, delta):
+    colors = ['r', 'g', 'b', 'c', 'm', 'y', 'k']
+    fig, ax = plt.subplots()
+    for index1 in range(k):
+        pts = np.array([X[j] for j in range(len(X)) if current_cluster[j] == index1])
+        ax.scatter(pts[:, 0], pts[:, 1], s=7, c=colors[index1])
+    ax.scatter(C[:, 0], C[:, 1], marker='*', s=90, c='#0599FF')
+    plt.title('delta will be:%.4f' % delta)
+    plt.show()
+
+
+while delta != 0:
+    # for each point in X
+    # choose the nearest center
+    for i in range(len(X)):
+        distances = dist(X[i], C)
+        print(distances.shape)
+        #print(distances[:5])
+        cluster = np.argmin(distances)
+        clusters[i] = cluster
+    print(clusters)
+    C_old = deepcopy(C)
+    # for each group of X
+    # calculate new center
+    for i in range(k):
+        points = [X[j] for j in range(len(X)) if clusters[j] == i]
+        C[i] = np.mean(points, axis=0)
+    delta = dist(C, C_old, None)
+    plot_kmean(clusters, delta)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo34
+
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.cluster import KMeans
+
+X = np.r_[np.random.randn(50, 2) + [2, 2],
+          np.random.randn(50, 2) + [0, -2],
+          np.random.randn(50, 2) + [-2, 2]]
+k = 3
+kmeans = KMeans(n_clusters=k)
+kmeans.fit(X)
+print(kmeans.cluster_centers_)
+print(kmeans.inertia_)
+
+colors = ['c', 'm', 'y', 'l']
+markers = ['.', '^', '*', 's']
+
+for i in range(k):
+    dataX = X[kmeans.labels_ == i]
+    plt.scatter(dataX[:, 0], dataX[:, 1], c=colors[i], marker=markers[i])
+    print(dataX.size)
+plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], marker='*', s=200, c='#0599FF')
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.cluster import KMeans
+
+Q = 5000
+X = np.r_[np.random.randn(Q, 2) + [3, 3],
+          np.random.randn(Q, 2) + [0, -3],
+          np.random.randn(Q, 2) + [-3, 3]]
+inertias = []
+
+for k in range(1, 10):
+    kmeans = KMeans(n_init=5, n_clusters=k)
+    kmeans.fit(X)
+    inertias.append(kmeans.inertia_)
+print(inertias)
+plt.plot(range(1, 10), inertias)
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo36
+
+import numpy as np
+from sklearn.neighbors import NearestNeighbors
+
+X = np.array([[-1, -1], [-2, -1], [-3, -2], [1, 1], [2, 1], [3, 2]])
+nn = NearestNeighbors(n_neighbors=3, algorithm='auto').fit(X)
+print(nn)
+distances, indices = nn.kneighbors(X, return_distance=True)
+print(distances)
+print(indices)
+print(nn.kneighbors_graph(X).toarray())
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo33
+
+from sklearn.cluster import KMeans
+import numpy as np
+
+X = np.array([[1, 0], [0, 1], [1, 2], [1, 4], [1, 6],
+              [-1, 0], [4, 2], [4, 4], [4, 0], [5, 6], [5, 7]])
+kmeans = KMeans(n_clusters=2).fit(X)
+
+print("labels=", kmeans.labels_)
+print("centers=", kmeans.cluster_centers_)
+
+newX = [[2, 2], [0, 0], [4, 4], [6, 6], [8, 8]]
+print("predict as", kmeans.predict(newX))
+print("kmean inertia=", kmeans.inertia_)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+demo37
+
+import pandas as pd
+import numpy as np
+
+URL1 = "http://archive.ics.uci.edu/ml/machine-learning-databases/undocumented/connectionist-bench/sonar/sonar.all-data"
+df1 = pd.read_csv(URL1, header=None, prefix='X')
+print(df1.shape)
+data, labels = df1.iloc[:, :-1], df1.iloc[:, -1]
+print(data.shape)
+print(labels.shape)
+print(np.unique(labels, return_counts=True))
+df1.rename(columns={'X60': 'Label'}, inplace=True)
+print(df1.columns)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import pandas as pd
+import numpy as np
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix
+
+URL1 = "http://archive.ics.uci.edu/ml/machine-learning-databases/undocumented/connectionist-bench/sonar/sonar.all-data"
+df1 = pd.read_csv(URL1, header=None, prefix='X')
+print(df1.shape)
+data, labels = df1.iloc[:, :-1], df1.iloc[:, -1]
+print(data.shape)
+print(labels.shape)
+print(np.unique(labels, return_counts=True))
+df1.rename(columns={'X60': 'Label'}, inplace=True)
+print(df1.columns)
+
+classifier = KNeighborsClassifier(n_neighbors=4)
+X_train, X_test, y_train, y_test = train_test_split(data, labels, test_size=0.3)
+classifier.fit(X_train, y_train)
+y_predict = classifier.predict(X_test)
+print("score=", classifier.score(X_test, y_test))
+
+result_cm1 = confusion_matrix(y_test, y_predict)
+print(result_cm1)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import time
+
+from sklearn import datasets
+from sklearn import model_selection
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from numpy import mean
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+
+iris = datasets.load_iris()
+data = iris.data
+target = iris.target
+
+regression1 = LogisticRegression(max_iter=50000)
+svc1 = SVC(kernel='linear', C=100)
+svc2 = SVC(kernel='poly', C=100)
+svc3 = SVC(kernel='rbf', C=100)
+tree1 = DecisionTreeClassifier()
+knn1 = KNeighborsClassifier(n_neighbors=2)
+knn2 = KNeighborsClassifier(n_neighbors=3)
+knn3 = KNeighborsClassifier(n_neighbors=4)
+knn4 = KNeighborsClassifier(n_neighbors=5)
+
+classifiers = [regression1, svc1, svc2, svc3, tree1, knn1, knn2, knn3, knn4]
+for c in classifiers:
+    score = model_selection.cross_val_score(c, data, target, cv=3)
+    print(c, score, mean(score))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import numpy as np
+from sklearn.naive_bayes import GaussianNB
+
+X = np.array([[-1, -1], [-2, -1], [-3, -2], [1, 1], [2, 1], [3, 2]])
+Y = np.array([1, 1, 1, 2, 2, 2])
+classifier = GaussianNB()
+classifier.fit(X, Y)
+newX = [[1, 0], [0, 1], [-1, 0], [0, -1]]
+print(classifier.predict(newX))
+
+classifier2 = GaussianNB()
+classifier2.partial_fit(X, Y, np.unique(Y))
+print(classifier2.predict(newX))
+classifier2.partial_fit([[0, 0]], [1])
+print(classifier2.predict(newX))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+from sklearn.naive_bayes import GaussianNB
+import numpy as np
+from matplotlib import pyplot as plt
+
+X = np.array([[-1, -1], [-2, -1], [-3, -2], [1, 1], [2, 1], [3, 2]])
+# Y = np.array([1, 1, 1, 2, 2, 2])
+#Y = np.array([1, 2, 2, 1, 2, 2])
+Y = np.array([1, 1, 2, 1, 1, 2])
+x_min, x_max = -4, 4
+y_min, y_max = -4, 4
+
+h = .025
+xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+classifier = GaussianNB()
+classifier.fit(X, Y)
+Z = classifier.predict(np.c_[xx.ravel(), yy.ravel()])
+Z = Z.reshape(xx.shape)
+plt.pcolormesh(xx, yy, Z)
+
+XB = []
+YB = []
+XR = []
+YR = []
+index = 0
+
+for index in range(0, len(Y)):
+    if Y[index] == 1:
+        XB.append(X[index, 0])
+        YB.append(X[index, 1])
+    if Y[index] == 2:
+        XR.append(X[index, 0])
+        YR.append(X[index, 1])
+plt.scatter(XB, YB, color='b', label='black')
+plt.scatter(XR, YR, color='r', label='red')
+plt.legend()
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo41
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from sklearn import datasets
+from sklearn.decomposition import PCA
+
+iris = datasets.load_iris()
+X = iris.data
+species = iris.target
+
+X_reduced = PCA(n_components=3).fit_transform(iris.data)
+print(X.shape, X_reduced.shape)
+
+fig = plt.figure(1, figsize=(9, 9))
+ax = Axes3D(fig, elev=-150, azim=110)
+ax.scatter(X_reduced[:, 0], X_reduced[:, 1], X_reduced[:, 2], c=species)
+ax.set_xlabel("first eigen")
+ax.set_ylabel("second eigen")
+ax.set_zlabel("third eigen")
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo42
+
+from numpy import array
+from sklearn.decomposition import PCA
+
+A = array([[1, 2, 3], [3, 4, 5], [5, 6, 7], [7, 8, 9]])
+print(A)
+
+pca1 = PCA(2)
+pca1.fit(A)
+print(pca1)
+print(pca1.components_)
+print(pca1.explained_variance_)
+print(pca1.explained_variance_ratio_)
+B = pca1.transform(A)
+print(B)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo43
+
+from numpy import array, cov, mean
+from numpy.linalg import eig
+
+A = array([[1, 2, 3], [3, 4, 5], [5, 6, 7], [7, 8, 9]])
+print(A)
+M = mean(A.T, axis=1)
+print(M)
+M2 = mean(A.T)
+print(M2)
+M3 = mean(A, axis=1)
+print(M3)
+C = A - M
+print(C)
+V = cov(C.T)
+print(V)
+values, vectors = eig(V)
+print("values=", values)
+print("vectors=", vectors)
+
+P = vectors.T.dot(C.T)
+print(P.T)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo44
+
+from sklearn import datasets, svm
+from sklearn.decomposition import PCA
+import numpy as np
+import matplotlib.pyplot as plt
+
+iris = datasets.load_iris()
+pca = PCA(n_components=2)
+data = pca.fit_transform(iris.data)
+print(data.shape, iris.data.shape)
+datamax = data.max(axis=0)
+datamin = data.min(axis=0)
+print(datamax)
+print(datamin)
+n = 2000
+X, Y = np.meshgrid(np.linspace(datamin[0], datamax[0], n),
+                   np.linspace(datamin[1], datamax[1], n))
+
+svc = svm.SVC()
+svc.fit(data, iris.target)
+Z = svc.predict(np.c_[X.ravel(), Y.ravel()])
+plt.contour(X, Y, Z.reshape(X.shape),
+            levels=[-.5, .5, 1.5], colors=['r', 'g', 'b'])
+for i, c in zip([0, 1, 2], ['r', 'g', 'b']):
+    d = data[iris.target == i]
+    plt.scatter(d[:, 0], d[:, 1], c=c)
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~
+demo45
+
+import tensorflow as tf
+import keras
+
+t1 = tf.constant('hello tensorflow')
+print(t1)
+print(tf.__version__)
+print(keras.__version__)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo46
+
+import tensorflow as tf
+
+# disable tf2 feature, tf1 behavior is back
+tf.compat.v1.disable_eager_execution()
+t1 = tf.constant("hello tensorflow")
+print(t1)
+session1 = tf.compat.v1.Session()
+print(session1.run(t1))
+session1.close()
+
+with tf.compat.v1.Session() as session2:
+    print("using with as:", session2.run(t1))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo47
+
+import tensorflow as tf
+import numpy as np
+
+a = np.array([5, 3, 8])
+b = np.array([3, -1, 2])
+print(a + b)
+print(np.add(a, b))
+
+t1 = tf.constant([5, 3, 8])
+t2 = tf.constant([3, -1, 2])
+print(t1 + t2)
+print((t1 + t2).numpy())
+print(tf.add(t1, t2))
+print(np.add(t1, t2))
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo48
+
+import tensorflow as tf
+import numpy as np
+
+tf.compat.v1.disable_eager_execution()
+a = np.array([5, 3, 8])
+b = np.array([3, -1, 2])
+print(a + b)
+print(np.add(a, b))
+
+t1 = tf.constant([5, 3, 8])
+t2 = tf.constant([3, -1, 2])
+print(t1 + t2)
+# print((t1 + t2).numpy())
+print(tf.add(t1, t2))
+# print(np.add(t1, t2))
+with tf.compat.v1.Session() as session:
+    print(session.run(tf.add(t1, t2)))
+    print(session.run(t1 + t2))
+~~~~~~~~~~~~~~~~~~~~~~~~
+import tensorflow as tf
+
+tf.compat.v1.disable_eager_execution()
+
+a = tf.compat.v1.placeholder(dtype=tf.int32, shape=(None,))
+b = tf.compat.v1.placeholder(dtype=tf.int32, shape=(None,))
+c = tf.add(a, b)
+
+with tf.compat.v1.Session() as session1:
+    result = session1.run(c, feed_dict={a: [1, 2, 3], b: [4, 5, 6]})
+
+    print(result)
+~~~~~~~~~~~~~~~~~~~~~~~~~
+import tensorflow as tf
+
+@tf.function
+def add(p, q):
+    return tf.add(p, q)
+
+
+print(add([1, 2, 3], [4, 5, 6]).numpy())
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+import tensorflow as tf
+from datetime import datetime
+
+
+def computeArea(sides):
+    a = sides[:, 0]
+    b = sides[:, 1]
+    c = sides[:, 2]
+    s = (a + b + c) / 2
+    areaSquare = s * (s - a) * (s - b) * (s - c)
+    return areaSquare ** 0.5
+
+
+print(computeArea(tf.constant([[3.0, 4.0, 5.0], [6.0, 6.0, 6.0], [6.0, 8.0, 10.0]])))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import tensorflow as tf
+from datetime import datetime
+
+
+# 手動建一個目錄logs
+
+#@tf.function
+def computeArea(sides):
+    a = sides[:, 0]
+    b = sides[:, 1]
+    c = sides[:, 2]
+    s = (a + b + c) / 2
+    areaSquare = s * (s - a) * (s - b) * (s - c)
+    return areaSquare ** 0.5
+
+
+stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+logdir = 'logs/demo51/%s' % stamp
+writer = tf.summary.create_file_writer(logdir)
+tf.summary.trace_on(graph=True, profiler=True)
+
+print(computeArea(tf.constant([[3.0, 4.0, 5.0], [6.0, 6.0, 6.0], [6.0, 8.0, 10.0]])))
+
+with writer.as_default():
+    tf.summary.trace_export(name='trace_graph', step=0, profiler_outdir=logdir)
+~~~~~~~~~~~~~~~~~~~~~~~~~
+terminal
+tensorboard --logdir=logs
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo52
+
+
+import tensorflow as tf
+
+vectors = [3.0, -1.0, 2.4, 5.9, 0.0001, -0.0005, 8.5, 100, 30000, 0.49, 0.51, 0.001]
+print(tf.nn.relu(vectors).numpy())
+print(tf.nn.sigmoid(vectors).numpy())
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo53
+
+import tensorflow as tf
+
+# x = tf.Variable(0.)
+x = tf.Variable(10.)
+with tf.GradientTape() as tape:
+    y = 2 * x + 3
+    diff_x = tape.gradient(y, x)
+    print(diff_x.numpy())
+
+with tf.GradientTape() as tape:
+    y2 = 2 * x ** 2 + 3 * x + 4
+    diff_x_2 = tape.gradient(y2, x)
+    print(diff_x_2.numpy())
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import tensorflow as tf
+
+x = tf.Variable(tf.random.uniform((2, 2)))
+print(x)
+
+with tf.GradientTape() as tape:
+    y = 5 * x ** 2 + 6 * x + 4
+    diff_1 = tape.gradient(y, x)
+print("x=", x.numpy(), sep="\n")
+# 10*x+6
+# 10*0.8370+6
+print("diff2=", diff_1.numpy(), sep="\n")
+
+W = tf.Variable(tf.random.uniform((1, 1)))
+b = tf.Variable(tf.zeros((1,)))
+#x = tf.random.uniform((1, 1))
+x = tf.Variable(tf.random.uniform((1, 1)))
+with tf.GradientTape() as tape:
+    y = tf.matmul(x, W) + 2 * b
+    grad1 = tape.gradient(y, [W, b, x])
+print("x=", x.numpy())
+print("w=", W.numpy())
+print("b=", b.numpy())
+print("y=", y.numpy())
+print(grad1[0].numpy())
+print(grad1[1].numpy())
+print(grad1[2].numpy())
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import tensorflow as tf
+
+input_const = tf.constant(3.)
+with tf.GradientTape() as tape:
+    tape.watch(input_const)
+    result = tf.square(input_const)
+    g1 = tape.gradient(result, input_const)
+    print(g1)
+
+W = tf.Variable(tf.random.uniform((1, 1)))
+b = tf.Variable(tf.zeros((1,)))
+x = tf.random.uniform((1, 1))
+# x = tf.Variable(tf.random.uniform((1, 1)))
+with tf.GradientTape() as tape:
+    tape.watch(x)
+    y = tf.matmul(x, W) + 2 * b
+    grad1 = tape.gradient(y, x)
+print("x=", x.numpy())
+print("w=", W.numpy())
+print("b=", b.numpy())
+print("y=", y.numpy())
+print(grad1)
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+import tensorflow as tf
+
+time = tf.Variable(5.)
+
+with tf.GradientTape() as outer_tape:
+    with tf.GradientTape() as inner_tape:
+        position = 4.9 * time ** 2
+        speed = inner_tape.gradient(position, time)
+        print("speed=", speed)
+    acc = outer_tape.gradient(speed, time)
+    print("accelerator=", acc)
