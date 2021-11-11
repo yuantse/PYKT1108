@@ -36,5 +36,17 @@ batches = [5, 10, 15]
 param_grid = dict(optimizer=optimizers, epochs=epochs, batch_size=batches,
                   init=inits)
 # 跑各種model參數並cross validation
+# total layer = (default k-fold)5*(3 layer)3*(optimizers)2*(inits)2*(epochs)3*(batches)3
 grid = GridSearchCV(estimator=model, param_grid=param_grid)
 grid_result = grid.fit(inputList, resultList)
+
+# 印出最好的參數組合 最好的預測值
+grid_result.best_params_, grid_result.best_score_
+
+
+# 印出所有的運算結果
+means = grid_result.cv_results_['mean_test_score']
+stds = grid_result.cv_results_['std_test_score']
+params = grid_result.cv_results_['params']
+for mean, stdev, param in zip(means, stds, params):
+    print("param:{} ==> score=>{}, std=>{}".format(mean,stdev,param))
