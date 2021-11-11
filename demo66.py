@@ -2,6 +2,7 @@ import numpy as np
 from keras import layers, models
 from keras.datasets import imdb
 import matplotlib.pyplot as plt
+from keras.callbacks import TensorBoard
 
 # 詞彙量只取15000
 MAX_WORDS = 15000
@@ -16,6 +17,10 @@ print(type(word_index))
 print(list(word_index.items())[:10])
 # 將數字轉為文字
 reverse_word_index = dict([(v, k) for (k, v) in word_index.items()])
+print(reverse_word_index[1])
+print(reverse_word_index[2])
+print(reverse_word_index[3])
+print(reverse_word_index[4])
 # 顯示前5筆影評
 for i in range(5):
     # 前3個字為保留字
@@ -58,6 +63,18 @@ model.add(layers.Dense(1, activation='sigmoid'))
 model.summary()
 model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
 
+model = models.Sequential()
+model.add(layers.Dense(64, activation='relu', input_shape=(MAX_WORDS,)))
+model.add(layers.Dense(1, activation='sigmoid'))
+model.summary()
+model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
+# 使用TensorBoard儲存紀錄
+callback1 = TensorBoard(log_dir="logs", histogram_freq=0, write_graph=True, write_images=True)
+model.fit(X_train, y_train, epochs=30, batch_size=256,
+          validation_data=(X_test, y_test), callbacks=[callback1])
+
+'''
+for Jupyter Notebook
 # 開始訓練
 history = model.fit(X_train, y_train, epochs=30, batch_size=256,
                     validation_data=(X_test, y_test))
@@ -77,3 +94,4 @@ val_loss = history_dict['val_loss']
 plt.plot(epochs, loss, 'g--', label='loss')
 plt.plot(epochs, val_loss, 'b-', label='validation loss')
 plt.legend()
+'''

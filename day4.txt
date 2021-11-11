@@ -1,0 +1,719 @@
+﻿import numpy as np
+import matplotlib.pyplot as plt
+import tensorflow as tf
+
+num_samples_per_class = 1000
+negative_samples = np.random.multivariate_normal(mean=[0, 3], cov=[[1, 0.5], [0.5, 1]], size=num_samples_per_class)
+positive_samples = np.random.multivariate_normal(mean=[-3, 0], cov=[[1, 0.5], [0.5, 1]], size=num_samples_per_class)
+
+inputs = np.vstack((negative_samples, positive_samples)).astype(np.float32)
+targets = np.vstack(
+    (np.zeros((num_samples_per_class, 1), dtype="float32"),
+     np.ones((num_samples_per_class, 1), dtype="float32")))
+plt.scatter(inputs[:, 0], inputs[:, 1], c=targets[:, 0])
+plt.show()
+
+input_dim = 2
+output_dim = 1
+
+W = tf.Variable(initial_value=tf.random.uniform(shape=(input_dim, output_dim)))
+b = tf.Variable(initial_value=tf.zeros(shape=(output_dim,)))
+
+
+def model(inputs):
+    return tf.matmul(inputs, W) + b
+
+
+def square_loss(targets, predictions):
+    per_sample_loss = tf.square(targets - predictions)
+    return tf.reduce_mean(per_sample_loss)
+
+
+learning_rate = 0.05
+
+
+def trainig_step(inputs, targets):
+    with tf.GradientTape() as tape:
+        predictions = model(inputs)
+        loss = square_loss(predictions, targets)
+    gradient1_w, gradient1_b = tape.gradient(loss, [W, b])
+    W.assign_sub(gradient1_w * learning_rate)
+    b.assign_sub(gradient1_b * learning_rate)
+    return loss
+
+
+for step in range(40):
+    loss = trainig_step(inputs, targets)
+    print("loss for step{}:{:.4f}".format(step, loss))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import numpy as np
+import matplotlib.pyplot as plt
+import tensorflow as tf
+
+num_samples_per_class = 1000
+negative_samples = np.random.multivariate_normal(mean=[0, 4], cov=[[1, 0.5], [0.5, 1]], size=num_samples_per_class)
+positive_samples = np.random.multivariate_normal(mean=[-4, 0], cov=[[1, 0.5], [0.5, 1]], size=num_samples_per_class)
+
+inputs = np.vstack((negative_samples, positive_samples)).astype(np.float32)
+targets = np.vstack(
+    (np.zeros((num_samples_per_class, 1), dtype="float32"),
+     np.ones((num_samples_per_class, 1), dtype="float32")))
+plt.scatter(inputs[:, 0], inputs[:, 1], c=targets[:, 0])
+plt.show()
+
+input_dim = 2
+output_dim = 1
+
+W = tf.Variable(initial_value=tf.random.uniform(shape=(input_dim, output_dim)))
+b = tf.Variable(initial_value=tf.zeros(shape=(output_dim,)))
+
+
+def model(inputs):
+    return tf.matmul(inputs, W) + b
+
+
+def square_loss(targets, predictions):
+    per_sample_loss = tf.square(targets - predictions)
+    return tf.reduce_mean(per_sample_loss)
+
+
+learning_rate = 0.05
+
+
+def trainig_step(inputs, targets):
+    with tf.GradientTape() as tape:
+        predictions = model(inputs)
+        loss = square_loss(predictions, targets)
+    gradient1_w, gradient1_b = tape.gradient(loss, [W, b])
+    W.assign_sub(gradient1_w * learning_rate)
+    b.assign_sub(gradient1_b * learning_rate)
+    return loss
+
+
+for step in range(40):
+    loss = trainig_step(inputs, targets)
+    print("loss for step{}:{:.4f}".format(step, loss))
+
+predictions = model(inputs)
+x = np.linspace(-2, -1, 100)
+y = -W[0] / W[1] * x + (0.5 - b) / W[1]
+plt.plot(x, y, "-r")
+# plt.scatter(inputs[:, 0], inputs[:, 1], c=predictions[:, 0] > 0.5)
+plt.scatter(inputs[:, 0], inputs[:, 1], c=targets[:, 0])
+plt.show()
+
+
+
+for step in range(40):
+    loss = trainig_step(inputs, targets)
+    print("loss for step{}:{:.4f}".format(step, loss))
+
+predictions = model(inputs)
+x = np.linspace(-6, 4, 100)
+y = -W[0] / W[1] * x + (0.5 - b) / W[1]
+plt.plot(x, y, "-r")
+plt.scatter(inputs[:, 0], inputs[:, 1], c=predictions[:, 0] > 0.5)
+plt.show()
+~~~~~~~~~~~~~~~~~~~~
+https://www.kaggle.com/
+~~~~~~~~~~~~~~~~~~~~~~
+put diabetes.csv to data\diabetes.csv
+~~~~~~~~~~~~~~~~~~~~~~~~~
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense
+
+FILENAME = 'data/diabetes.csv'
+dataset1 = np.loadtxt(FILENAME, delimiter=',', skiprows=1)
+print(type(dataset1))
+print(dataset1.shape)
+inputList = dataset1[:, :8]
+resultList = dataset1[:, 8]
+print(inputList.shape)
+print(resultList.shape)
+
+model = Sequential()
+model.add(Dense(14, input_dim=8, activation='relu'))
+model.add(Dense(8, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+# model.compile
+model.summary()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+demo58
+
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense
+
+FILENAME = 'data/diabetes.csv'
+dataset1 = np.loadtxt(FILENAME, delimiter=',', skiprows=1)
+print(type(dataset1))
+print(dataset1.shape)
+inputList = dataset1[:, :8]
+resultList = dataset1[:, 8]
+print(inputList.shape)
+print(resultList.shape)
+
+model = Sequential()
+model.add(Dense(14, input_dim=8, activation='relu'))
+model.add(Dense(8, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.summary()
+
+model.fit(inputList, resultList, epochs=200, batch_size=20)
+scores = model.evaluate(inputList, resultList)
+print(type(scores))
+print(scores)
+print(model.metrics_names)
+for s, m in zip(scores, model.metrics_names):
+    print("{}={}".format(m, s))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+from keras.models import save_model, load_model
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense
+
+# 手動建一個目錄models
+
+FILENAME = 'data/diabetes.csv'
+dataset1 = np.loadtxt(FILENAME, delimiter=',', skiprows=1)
+print(type(dataset1))
+print(dataset1.shape)
+inputList = dataset1[:, :8]
+resultList = dataset1[:, 8]
+print(inputList.shape)
+print(resultList.shape)
+
+
+def createModel():
+    m = Sequential()
+    m.add(Dense(14, input_dim=8, activation='relu'))
+    m.add(Dense(8, activation='relu'))
+    m.add(Dense(1, activation='sigmoid'))
+    m.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    m.summary()
+    return m
+
+
+model = createModel()
+
+model.fit(inputList, resultList, epochs=200, batch_size=20)
+MODEL_PATH = 'models/demo59'
+save_model(model, MODEL_PATH)
+scores = model.evaluate(inputList, resultList)
+print("trained model:", scores)
+
+model2 = createModel()
+scores2 = model2.evaluate(inputList, resultList)
+print("not trained model:", scores2)
+
+model3 = load_model(MODEL_PATH)
+scores3 = model3.evaluate(inputList, resultList)
+print("loaded model:", scores3)
+~~~~~~~~~~~~~~~
+jupyter-notebook
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense
+
+FILENAME = 'data/diabetes.csv'
+dataset1 = np.loadtxt(FILENAME, delimiter=',', skiprows=1)
+print(type(dataset1))
+print(dataset1.shape)
+inputList = dataset1[:, :8]
+resultList = dataset1[:, 8]
+print(inputList.shape)
+print(resultList.shape)
+
+model = Sequential()
+model.add(Dense(14, input_dim=8, activation='relu'))
+model.add(Dense(8, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.summary()
+
+history = model.fit(inputList, resultList, validation_split=0.1, epochs=200, batch_size=20)
+history.history
+~~~~~~~~~~~~~~~~~~~~~~~~~
+from matplotlib import pyplot as plt
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.legend(['accuracy','validation accuracy'])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.legend(['loss','val_loss'])
+~~~~~~~~~~~~~~~~~~~~~~~
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense
+from sklearn.model_selection import train_test_split
+
+FILENAME = 'data/diabetes.csv'
+dataset1 = np.loadtxt(FILENAME, delimiter=',', skiprows=1)
+print(type(dataset1))
+print(dataset1.shape)
+inputList = dataset1[:, :8]
+resultList = dataset1[:, 8]
+print(inputList.shape)
+print(resultList.shape)
+
+print(np.unique(resultList, return_counts=True))
+feature_train, feature_test, label_train, label_test = train_test_split(inputList, resultList,
+                                                                        test_size=0.2, stratify=resultList)
+
+for d in [resultList, label_train, label_test]:
+    classes, counts = np.unique(d, return_counts=True)
+    for cl, co in zip(classes, counts):
+        print("{}==>{:.2f}".format(int(cl), co / sum(counts)))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense
+from sklearn.model_selection import train_test_split
+
+FILENAME = 'data/diabetes.csv'
+dataset1 = np.loadtxt(FILENAME, delimiter=',', skiprows=1)
+print(type(dataset1))
+print(dataset1.shape)
+inputList = dataset1[:, :8]
+resultList = dataset1[:, 8]
+print(inputList.shape)
+print(resultList.shape)
+
+print(np.unique(resultList, return_counts=True))
+feature_train, feature_test, label_train, label_test = train_test_split(inputList, resultList,
+                                                                        test_size=0.2, stratify=resultList)
+
+for d in [resultList, label_train, label_test]:
+    classes, counts = np.unique(d, return_counts=True)
+    for cl, co in zip(classes, counts):
+        print("{}==>{:.2f}".format(int(cl), co / sum(counts)))
+
+model = Sequential()
+model.add(Dense(14, input_dim=8, activation='relu'))
+model.add(Dense(8, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.summary()
+
+model.fit(feature_train, label_train, validation_data=(feature_test, label_test), epochs=200, batch_size=20)
+scores = model.evaluate(feature_test, label_test)
+
+for s, m in zip(scores, model.metrics_names):
+    print("{}={}".format(m, s))
+
+~~~~~~~~~~~~~~~~~~~
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense
+from sklearn.model_selection import StratifiedKFold
+
+FILENAME = 'data/diabetes.csv'
+dataset1 = np.loadtxt(FILENAME, delimiter=',', skiprows=1)
+print(type(dataset1))
+print(dataset1.shape)
+inputList = dataset1[:, :8]
+resultList = dataset1[:, 8]
+print(inputList.shape)
+print(resultList.shape)
+
+fiveFold = StratifiedKFold(n_splits=5, shuffle=True)
+totalScores = []
+
+
+def createModel():
+    model = Sequential()
+    model.add(Dense(14, input_dim=8, activation='relu'))
+    model.add(Dense(8, activation='relu'))
+    model.add(Dense(1, activation='sigmoid'))
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    # model.summary()
+    return model
+
+
+for train, test in fiveFold.split(inputList, resultList):
+    print("init a run")
+    m = createModel()
+    m.fit(inputList[train], resultList[train], epochs=200, batch_size=20, verbose=0)
+    scores = m.evaluate(inputList[test], resultList[test])
+    totalScores.append(scores[1] * 100)
+print("total score mean={}, std={}".format(np.mean(totalScores), np.std(totalScores)))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+from keras.models import save_model, load_model
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.wrappers.scikit_learn import KerasClassifier
+from sklearn.model_selection import StratifiedKFold, cross_val_score
+
+# 手動建一個目錄models
+
+FILENAME = 'data/diabetes.csv'
+dataset1 = np.loadtxt(FILENAME, delimiter=',', skiprows=1)
+print(type(dataset1))
+print(dataset1.shape)
+inputList = dataset1[:, :8]
+resultList = dataset1[:, 8]
+print(inputList.shape)
+print(resultList.shape)
+
+
+def createModel():
+    m = Sequential()
+    m.add(Dense(14, input_dim=8, activation='relu'))
+    m.add(Dense(8, activation='relu'))
+    m.add(Dense(1, activation='sigmoid'))
+    m.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    m.summary()
+    return m
+
+
+model = KerasClassifier(build_fn=createModel, epochs=200, batch_size=20, verbose=0)
+fiveFold = StratifiedKFold(n_splits=5, shuffle=True)
+results = cross_val_score(model, inputList, resultList, cv=fiveFold)
+print("mean=%.3f, std=%.3f" % (results.mean(), results.std()))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+from keras.models import save_model, load_model
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.wrappers.scikit_learn import KerasClassifier
+from sklearn.model_selection import StratifiedKFold, cross_val_score, GridSearchCV
+
+# 手動建一個目錄models
+
+FILENAME = 'data/diabetes.csv'
+dataset1 = np.loadtxt(FILENAME, delimiter=',', skiprows=1)
+print(type(dataset1))
+print(dataset1.shape)
+inputList = dataset1[:, :8]
+resultList = dataset1[:, 8]
+print(inputList.shape)
+print(resultList.shape)
+
+
+def createModel(optimizer='adam', init='uniform'):
+    m = Sequential()
+    m.add(Dense(14, input_dim=8, kernel_initializer=init, activation='relu'))
+    m.add(Dense(8, activation='relu'))
+    m.add(Dense(1, activation='sigmoid'))
+    m.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+    m.summary()
+    return m
+
+
+model = KerasClassifier(build_fn=createModel, verbose=0)
+optimizers = ['rmsprop', 'adam']
+inits = ['normal', 'uniform']
+epochs = [50, 100, 150]
+batches = [5, 10, 15]
+param_grid = dict(optimizer=optimizers, epochs=epochs, batch_size=batches,
+                  init=inits)
+grid = GridSearchCV(estimator=model, param_grid=param_grid)
+grid_result = grid.fit(inputList, resultList)
+~~~~~~~~~~~~~~~~~~~~
+grid_result.best_params_, grid_result.best_score_
+~~~~~~~~~~~~~~~~~~~~~~
+means = grid_result.cv_results_['mean_test_score']
+stds = grid_result.cv_results_['std_test_score']
+params = grid_result.cv_results_['params']
+for mean, stdev, param in zip(means, stds, params):
+    print("param:{} ==> score=>{}, std=>{}".format(mean,stdev,param))
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+https://archive.ics.uci.edu/ml/machine-learning-databases/iris/
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import pandas as pd
+import numpy as np
+
+FILE_NAME = 'data/iris.data'
+df1 = pd.read_csv(FILE_NAME, header=None)
+dataset = df1.values
+features = dataset[:, 0:4].astype(float)
+labels = dataset[:, 4]
+print(features.shape)
+print(labels.shape)
+print(np.unique(labels, return_counts=True))
+print(df1.describe())
+
+https://anaconda.org/conda-forge/scikit-learn-intelex~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import LabelEncoder
+import numpy as np
+from keras.utils import np_utils
+
+FILE_NAME = 'data/iris.data'
+df1 = pd.read_csv(FILE_NAME, header=None)
+dataset = df1.values
+features = dataset[:, 0:4].astype(float)
+labels = dataset[:, 4]
+print(features.shape)
+print(labels.shape)
+print(np.unique(labels, return_counts=True))
+print(df1.describe())
+
+encoder = LabelEncoder()
+encoder.fit(labels)
+encoded_Y = encoder.transform(labels)
+print(np.unique(encoded_Y, return_counts=True))
+dummy_y = np_utils.to_categorical(encoded_Y)
+print(dummy_y.shape)
+print(dummy_y[:5])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import LabelEncoder
+import numpy as np
+from keras.utils import np_utils
+from keras.models import Sequential
+from keras.layers import Dense
+from sklearn.model_selection import KFold, cross_val_score
+from keras.wrappers.scikit_learn import KerasClassifier
+
+FILE_NAME = 'data/iris.data'
+df1 = pd.read_csv(FILE_NAME, header=None)
+dataset = df1.values
+features = dataset[:, 0:4].astype(float)
+labels = dataset[:, 4]
+print(features.shape)
+print(labels.shape)
+print(np.unique(labels, return_counts=True))
+print(df1.describe())
+
+encoder = LabelEncoder()
+encoder.fit(labels)
+encoded_Y = encoder.transform(labels)
+print(np.unique(encoded_Y, return_counts=True))
+dummy_y = np_utils.to_categorical(encoded_Y)
+print(dummy_y.shape)
+print(dummy_y[:5])
+
+
+def baselineModel():
+    model = Sequential()
+    model.add(Dense(8, input_dim=4, activation='relu'))
+    model.add(Dense(3, activation='softmax'))
+    model.summary()
+    model.compile(loss="categorical_crossentropy", optimizer='adam',
+                  metrics=['accuracy'])
+    return model
+
+
+estimator = KerasClassifier(build_fn=baselineModel, epochs=200, batch_size=10, verbose=1)
+kfold = KFold(n_splits=3, shuffle=True)
+result = cross_val_score(estimator, features, dummy_y, cv=kfold)
+print("acc={}, std={}".format(result.mean(), result.std()))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import numpy
+from keras.datasets import imdb
+from matplotlib import pyplot as plt
+
+(X_train, y_train), (X_test, y_test) = imdb.load_data()
+print(X_train.shape)
+print(X_test.shape)
+print(y_train.shape)
+print(y_test.shape)
+X = numpy.concatenate((X_train, X_test), axis=0)
+y = numpy.concatenate((y_train, y_test), axis=0)
+print(X.shape)
+print(y.shape)
+print(numpy.unique(y, return_counts=True))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import numpy
+from keras.datasets import imdb
+from matplotlib import pyplot as plt
+
+(X_train, y_train), (X_test, y_test) = imdb.load_data()
+print(X_train.shape)
+print(X_test.shape)
+print(y_train.shape)
+print(y_test.shape)
+X = numpy.concatenate((X_train, X_test), axis=0)
+y = numpy.concatenate((y_train, y_test), axis=0)
+print(X.shape)
+print(y.shape)
+print(numpy.unique(y, return_counts=True))
+
+print(len(numpy.unique(numpy.hstack(X))))
+result = [len(x) for x in X]
+print("comments mean={}, std={}".format(numpy.mean(result), numpy.std(result)))
+
+plt.subplot(121)
+plt.boxplot(result)
+plt.subplot(122)
+plt.hist(result)
+plt.show()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import numpy as np
+from keras import layers, models
+from keras.datasets import imdb
+
+MAX_WORDS = 15000
+(train_data, train_labels), (test_data, test_labels) = imdb.load_data(num_words=MAX_WORDS)
+print(train_data[0])
+print(max([max(sequence) for sequence in train_data]))
+
+word_index = imdb.get_word_index()
+print(type(word_index))
+print(list(word_index.items())[:10])
+reverse_word_index = dict([(v, k) for (k, v) in word_index.items()])
+for i in range(5):
+    decoded_review = ' '.join([reverse_word_index.get(i - 3, "?") for i in train_data[i]])
+    print(decoded_review)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import numpy as np
+from keras import layers, models
+from keras.datasets import imdb
+
+MAX_WORDS = 15000
+(train_data, train_labels), (test_data, test_labels) = imdb.load_data(num_words=MAX_WORDS)
+print(train_data[0])
+print(max([max(sequence) for sequence in train_data]))
+
+word_index = imdb.get_word_index()
+print(type(word_index))
+print(list(word_index.items())[:10])
+reverse_word_index = dict([(v, k) for (k, v) in word_index.items()])
+for i in range(5):
+    decoded_review = ' '.join([reverse_word_index.get(i - 3, "?") for i in train_data[i]])
+    print(decoded_review)
+
+
+def vectorize_sequence(sequences, dimension=MAX_WORDS):
+    results = np.zeros((len(sequences), dimension))
+    for i, sequence in enumerate(sequences):
+        results[i, sequence] = 1.
+    return results
+
+
+X_train = vectorize_sequence(train_data)
+X_test = vectorize_sequence(test_data)
+y_train = np.asarray(train_labels).astype('float32')
+y_test = np.asarray(test_labels).astype('float32')
+print(X_train[0])
+print(X_train.shape)
+print(X_test.shape)
+print(y_train.shape)
+print(y_test.shape)
+~~~~~~~~~~~~~~~~~~~~~~~~
+import numpy as np
+from keras import layers, models
+from keras.datasets import imdb
+
+MAX_WORDS = 15000
+(train_data, train_labels), (test_data, test_labels) = imdb.load_data(num_words=MAX_WORDS)
+print(train_data[0])
+print(max([max(sequence) for sequence in train_data]))
+
+word_index = imdb.get_word_index()
+print(type(word_index))
+print(list(word_index.items())[:10])
+reverse_word_index = dict([(v, k) for (k, v) in word_index.items()])
+for i in range(5):
+    decoded_review = ' '.join([reverse_word_index.get(i - 3, "?") for i in train_data[i]])
+    print(decoded_review)
+
+
+def vectorize_sequence(sequences, dimension=MAX_WORDS):
+    results = np.zeros((len(sequences), dimension))
+    for i, sequence in enumerate(sequences):
+        results[i, sequence] = 1.
+    return results
+
+
+X_train = vectorize_sequence(train_data)
+X_test = vectorize_sequence(test_data)
+y_train = np.asarray(train_labels).astype('float32')
+y_test = np.asarray(test_labels).astype('float32')
+print(X_train[0])
+print(X_train.shape)
+print(X_test.shape)
+print(y_train.shape)
+print(y_test.shape)
+
+model = models.Sequential()
+model.add(layers.Dense(64, activation='relu', input_shape=(MAX_WORDS,)))
+model.add(layers.Dense(1, activation='sigmoid'))
+model.summary()
+model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
+
+history = model.fit(X_train, y_train, epochs=30, batch_size=256,
+                    validation_data=(X_test, y_test))
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import matplotlib.pyplot as plt
+history_dict = history.history
+accuracy = history_dict['accuracy']
+val_accuracy = history_dict['val_accuracy']
+epochs = range(1, len(accuracy)+1)
+plt.plot(epochs, accuracy, 'g--', label='accuracy')
+plt.plot(epochs, val_accuracy, 'b-', label='validation accuracy')
+plt.legend()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+loss = history_dict['loss']
+val_loss = history_dict['val_loss']
+plt.plot(epochs, loss, 'g--', label='loss')
+plt.plot(epochs, val_loss, 'b-', label='validation loss')
+plt.legend()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import numpy as np
+from keras import layers, models
+from keras.datasets import imdb
+from keras.callbacks import TensorBoard
+
+MAX_WORDS = 15000
+(train_data, train_labels), (test_data, test_labels) = imdb.load_data(num_words=MAX_WORDS)
+print(train_data[0])
+print(max([max(sequence) for sequence in train_data]))
+
+word_index = imdb.get_word_index()
+print(type(word_index))
+print(list(word_index.items())[:10])
+
+reverse_word_index = dict([(v, k) for (k, v) in word_index.items()])
+# print(reverse_word_index[0])
+print(reverse_word_index[1])
+print(reverse_word_index[2])
+print(reverse_word_index[3])
+print(reverse_word_index[4])
+for i in range(5):
+    decoded_review = ' '.join([reverse_word_index.get(i - 3, "?") for i in train_data[i]])
+    print(decoded_review)
+
+
+def vectorize_sequence(sequences, dimension=MAX_WORDS):
+    results = np.zeros((len(sequences), dimension))
+    for i, sequence in enumerate(sequences):
+        results[i, sequence] = 1.
+    return results
+
+
+X_train = vectorize_sequence(train_data)
+X_test = vectorize_sequence(test_data)
+y_train = np.asarray(train_labels).astype('float32')
+y_test = np.asarray(test_labels).astype('float32')
+print(X_train[0])
+print(X_train.shape)
+print(X_test.shape)
+print(y_train.shape)
+print(y_test.shape)
+
+model = models.Sequential()
+model.add(layers.Dense(64, activation='relu', input_shape=(MAX_WORDS,)))
+model.add(layers.Dense(1, activation='sigmoid'))
+model.summary()
+model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
+callback1 = TensorBoard(log_dir="logs", histogram_freq=0, write_graph=True, write_images=True)
+model.fit(X_train, y_train, epochs=30, batch_size=256,
+          validation_data=(X_test, y_test), callbacks=[callback1])
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tensorboard --logdir=logs
+
+https://keras.io/api/datasets/imdb/#imdb-movie-review-sentiment-classification-dataset
+
+https://stackoverflow.com/questions/42821330/restore-original-text-from-keras-s-imdb-dataset
