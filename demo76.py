@@ -21,6 +21,8 @@ model.add(layers.Conv2D(32, (3, 3), activation=tf.nn.relu, padding='valid'))
 model.add(layers.MaxPooling2D((2, 2)))
 # 從feature map再做一次　但不maxpolling
 model.add(layers.Conv2D(32, (3, 3), activation=tf.nn.relu, padding='valid'))
+# 隨機丟失一些資料 增加訓練強度
+model.add(layers.Dropout(0.2))
 # 把資料攤平 再用基本nn運算
 model.add(layers.Flatten())
 # 降維度
